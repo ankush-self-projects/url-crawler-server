@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"os"
+	"url-crawler-backend/internal/model"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -21,6 +22,11 @@ func Connect() {
 	connection, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(fmt.Sprintf("Failed to connect to DB: %v", err))
+	}
+
+	// 🔑 Auto-migrate your tables here!
+	if err := connection.AutoMigrate(&model.URL{}); err != nil {
+		panic(fmt.Sprintf("Failed to run migrations: %v", err))
 	}
 
 	DB = connection
