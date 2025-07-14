@@ -39,7 +39,7 @@ func Connect() {
 	}
 
 	// 🔑 Auto-migrate your tables here!
-	if err := connection.AutoMigrate(&model.URL{}); err != nil {
+	if err := connection.AutoMigrate(&model.URL{}, &model.User{}); err != nil {
 		panic(fmt.Sprintf("Failed to run migrations: %v", err))
 	}
 

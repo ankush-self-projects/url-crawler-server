@@ -11,12 +11,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// Request body for adding a new URL
 type AddURLRequest struct {
 	URL string `json:"url" validate:"required,url"`
 }
 
-// AddURL handles POST /api/urls
 func AddURL(c echo.Context) error {
 	req := new(AddURLRequest)
 
@@ -41,7 +39,6 @@ func AddURL(c echo.Context) error {
 	return c.JSON(http.StatusCreated, urlRecord)
 }
 
-// GetURLs handles GET /api/urls
 func GetURLs(c echo.Context) error {
 	var urls []model.URL
 
@@ -52,7 +49,6 @@ func GetURLs(c echo.Context) error {
 	return c.JSON(http.StatusOK, urls)
 }
 
-// StartCrawl handles POST /api/urls/:id/start
 func StartCrawl(c echo.Context) error {
 	id := c.Param("id")
 	var urlRecord model.URL
@@ -65,7 +61,6 @@ func StartCrawl(c echo.Context) error {
 	urlRecord.Status = "running"
 	db.DB.Save(&urlRecord)
 
-	// Run the crawl in a goroutine so we don't block the API
 	go func(urlModel model.URL) {
 		err := crawler.CrawlURL(&urlModel)
 		if err != nil {
