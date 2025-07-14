@@ -12,11 +12,25 @@ import (
 var DB *gorm.DB
 
 func Connect() {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASS"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_NAME"),
+	// Get database configuration from environment variables
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
+	// Set default port if not provided
+	if dbPort == "" {
+		dbPort = "3306"
+	}
+
+	// Build the DSN (Data Source Name) with separate host and port
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		dbUser,
+		dbPass,
+		dbHost,
+		dbPort,
+		dbName,
 	)
 
 	connection, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
