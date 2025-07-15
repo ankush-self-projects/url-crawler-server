@@ -80,6 +80,49 @@ make build
 ./bin/url-crawler-backend
 ```
 
+## Testing
+
+The project includes comprehensive test coverage with unit tests, integration tests, and API tests.
+
+### Run all tests
+```bash
+make test
+```
+
+### Run specific test types
+```bash
+# Unit tests only
+make test-unit
+
+# Integration tests only
+make test-integration
+
+# Generate coverage report
+make test-coverage
+```
+
+### Manual test commands
+```bash
+# Run all tests with verbose output
+go test ./... -v
+
+# Run tests for specific package
+go test ./internal/api -v
+go test ./internal/crawler -v
+go test ./tests -v
+
+# Run tests with coverage
+go test ./... -coverprofile=coverage.out
+go tool cover -html=coverage.out -o coverage.html
+```
+
+### Test Coverage
+The test suite covers:
+- **Authentication**: Login functionality, JWT token generation
+- **API Handlers**: URL management, crawling operations
+- **Crawler Logic**: HTML parsing, link analysis, form detection
+- **Integration**: Complete workflows from API to database
+
 ## API Endpoints
 
 ### Authentication
@@ -151,10 +194,16 @@ url-crawler-backend/
 │   └── seed/            # Database seeding
 ├── internal/
 │   ├── api/             # HTTP handlers and routes
+│   │   ├── auth.go      # Authentication handlers
+│   │   ├── handlers.go  # URL management handlers
+│   │   ├── routes.go    # Route definitions
+│   │   └── *_test.go    # API tests
 │   ├── crawler/         # Web crawling logic
+│   │   └── *_test.go    # Crawler tests
 │   ├── db/              # Database connection
 │   ├── middleware/      # JWT middleware
 │   └── model/           # Data models
+├── tests/               # Integration tests
 ├── .env                 # Environment variables
 ├── go.mod              # Go modules
 ├── Makefile            # Build commands
@@ -167,7 +216,10 @@ url-crawler-backend/
 - `make run` - Run the application
 - `make build` - Build the binary
 - `make tidy` - Install dependencies
-- `make test` - Run tests
+- `make test` - Run all tests
+- `make test-unit` - Run unit tests only
+- `make test-integration` - Run integration tests only
+- `make test-coverage` - Generate coverage report
 - `make docker-build` - Build Docker image
 - `make docker-run` - Run Docker container
 
@@ -186,3 +238,8 @@ url-crawler-backend/
 - Check if the target URL is accessible
 - Verify network connectivity
 - Review server logs for specific error messages
+
+### Test issues
+- Ensure all dependencies are installed: `go mod tidy`
+- Check that SQLite is available for tests
+- Verify test database connections are working

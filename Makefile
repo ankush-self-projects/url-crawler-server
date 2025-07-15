@@ -12,6 +12,17 @@ tidy:
 test:
 	go test ./...
 
+test-unit:
+	go test ./internal/api -v
+	go test ./internal/crawler -v
+
+test-integration:
+	go test ./tests -v
+
+test-coverage:
+	go test ./... -coverprofile=coverage.out
+	go tool cover -html=coverage.out -o coverage.html
+
 docker-build:
 	docker build -t $(APP_NAME):latest .
 
