@@ -24,7 +24,7 @@ A Go-based web crawler backend service that analyzes URLs and extracts metadata 
 
 ### 1. Clone the repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/ankush-self-projects/url-crawler-server
 cd url-crawler-backend
 ```
 
@@ -36,7 +36,7 @@ go mod tidy
 ### 3. Database setup
 Create a MySQL database:
 ```sql
-CREATE DATABASE url_crawler;
+CREATE DATABASE url_info;
 ```
 
 ### 4. Environment configuration
