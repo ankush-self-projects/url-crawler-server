@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-
 	"url-crawler-backend/internal/db"
 	"url-crawler-backend/internal/model"
 
@@ -10,7 +9,6 @@ import (
 )
 
 func main() {
-
 	db.Connect()
 
 	var existing model.User
@@ -25,7 +23,6 @@ func main() {
 		log.Fatal("Failed to hash password:", err)
 	}
 
-	// Create the user
 	user := model.User{
 		Username: "admin",
 		Password: string(hashed),

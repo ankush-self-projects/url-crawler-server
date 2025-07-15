@@ -18,15 +18,14 @@ type AddURLRequest struct {
 func AddURL(c echo.Context) error {
 	req := new(AddURLRequest)
 
-	// Bind and validate input
 	if err := c.Bind(req); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request payload")
 	}
+
 	if req.URL == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "URL is required")
 	}
 
-	// Create new URL record
 	urlRecord := model.URL{
 		URL:    req.URL,
 		Status: "queued",
@@ -57,7 +56,6 @@ func StartCrawl(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "URL not found")
 	}
 
-	// Update status to running
 	urlRecord.Status = "running"
 	db.DB.Save(&urlRecord)
 
@@ -72,5 +70,7 @@ func StartCrawl(c echo.Context) error {
 		db.DB.Save(&urlModel)
 	}(urlRecord)
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "Crawl started"})
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Crawl started",
+	})
 }
