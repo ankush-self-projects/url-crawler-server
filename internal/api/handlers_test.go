@@ -52,6 +52,46 @@ func TestAddURL(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 			expectedError:  true,
 		},
+		{
+			name: "Invalid URL - missing scheme",
+			requestBody: map[string]interface{}{
+				"url": "www.example.com",
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedError:  true,
+		},
+		{
+			name: "Invalid URL - missing host",
+			requestBody: map[string]interface{}{
+				"url": "http:///path",
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedError:  true,
+		},
+		{
+			name: "Invalid URL - malformed",
+			requestBody: map[string]interface{}{
+				"url": "ht!tp://bad^url",
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedError:  true,
+		},
+		{
+			name: "No scheme - example.com",
+			requestBody: map[string]interface{}{
+				"url": "example.com",
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedError:  true,
+		},
+		{
+			name: "No scheme - www.example.com",
+			requestBody: map[string]interface{}{
+				"url": "www.example.com",
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedError:  true,
+		},
 	}
 
 	for _, tt := range tests {

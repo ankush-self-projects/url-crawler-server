@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"net/url"
 	"time"
 
 	"url-crawler-backend/internal/crawler"
@@ -24,6 +25,11 @@ func AddURL(c echo.Context) error {
 
 	if req.URL == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "URL is required")
+	}
+
+	parsed, err := url.ParseRequestURI(req.URL)
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Please include http:// or https:// in your URL.")
 	}
 
 	urlRecord := model.URL{
