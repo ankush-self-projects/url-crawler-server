@@ -80,3 +80,18 @@ func StartCrawl(c echo.Context) error {
 		"message": "Crawl started",
 	})
 }
+
+type DeleteURLsRequest struct {
+	IDs []uint `json:"ids"`
+}
+
+func DeleteURLs(c echo.Context) error {
+	var req DeleteURLsRequest
+	if err := c.Bind(&req); err != nil || len(req.IDs) == 0 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request payload: must provide non-empty 'ids' array")
+	}
+	if err := db.DB.Delete(&model.URL{}, req.IDs).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to delete URLs")
+	}
+	return c.NoContent(http.StatusNoContent)
+}
