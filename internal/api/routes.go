@@ -14,6 +14,6 @@ func RegisterRoutes(e *echo.Echo) {
 
 	api.POST("/urls", AddURL)
 	api.GET("/urls", GetURLs)
-	api.POST("/urls/:id/start", StartCrawl)
+	api.POST("/urls/crawl", StartBulkCrawl)
 	api.DELETE("/urls", DeleteURLs)
 }

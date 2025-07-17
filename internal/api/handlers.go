@@ -54,30 +54,36 @@ func GetURLs(c echo.Context) error {
 	return c.JSON(http.StatusOK, urls)
 }
 
-func StartCrawl(c echo.Context) error {
-	id := c.Param("id")
-	var urlRecord model.URL
-
-	if err := db.DB.First(&urlRecord, id).Error; err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "URL not found")
+func StartBulkCrawl(c echo.Context) error {
+	var req DeleteURLsRequest // reuse the struct with IDs []uint
+	if err := c.Bind(&req); err != nil || len(req.IDs) == 0 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid request payload: must provide non-empty 'ids' array")
 	}
 
-	urlRecord.Status = "running"
-	db.DB.Save(&urlRecord)
-
-	go func(urlModel model.URL) {
-		err := crawler.CrawlURL(&urlModel)
-		if err != nil {
-			urlModel.Status = "error"
-		} else {
-			urlModel.Status = "done"
+	var notFound []uint
+	for _, id := range req.IDs {
+		var urlRecord model.URL
+		if err := db.DB.First(&urlRecord, id).Error; err != nil {
+			notFound = append(notFound, id)
+			continue
 		}
-		urlModel.UpdatedAt = time.Now()
-		db.DB.Save(&urlModel)
-	}(urlRecord)
+		urlRecord.Status = "running"
+		db.DB.Save(&urlRecord)
+		go func(urlModel model.URL) {
+			err := crawler.CrawlURL(&urlModel)
+			if err != nil {
+				urlModel.Status = "error"
+			} else {
+				urlModel.Status = "done"
+			}
+			urlModel.UpdatedAt = time.Now()
+			db.DB.Save(&urlModel)
+		}(urlRecord)
+	}
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Crawl started",
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message":   "Bulk crawl started",
+		"not_found": notFound,
 	})
 }
 
