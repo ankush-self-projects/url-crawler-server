@@ -131,18 +131,18 @@ func TestCrawlFlow(t *testing.T) {
 	testDB.Create(&url)
 
 	// Test starting crawl
-	req := httptest.NewRequest(http.MethodPost, "/api/urls/1/start", nil)
+	jsonBody, _ := json.Marshal(map[string]interface{}{"ids": []uint{url.ID}})
+	req := httptest.NewRequest(http.MethodPost, "/api/urls/crawl", bytes.NewBuffer(jsonBody))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	c.SetParamNames("id")
-	c.SetParamValues("1")
 
-	err := api.StartCrawl(c)
+	err := api.StartBulkCrawl(c)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, rec.Code)
 
 	var response map[string]interface{}
 	err = json.Unmarshal(rec.Body.Bytes(), &response)
 	assert.NoError(t, err)
-	assert.Equal(t, "Crawl started", response["message"])
+	assert.Equal(t, "Bulk crawl started", response["message"])
 }
